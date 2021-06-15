@@ -35,28 +35,30 @@ io.on('connection', (socket) => {
     if(!user){
       return
     }
-    io.to(user.room).emit('message', {user: user.username, text: msg})
+    console.log(user)
+    io.to(user.room).emit('message', {user: user, message: msg})
 
     //io.emit('message', msg)
   })
 
   socket.on('create', name => {
     console.log('CREATE BY: ' + name)
-    let newRoom = UserController.createRoom()
+    let room = UserController.createRoom()
+    console.log('ROOMID: ' + room)
     let socketID = socket.id
-    socket.join(newRoom)
-    socket.emit('roomID', newRoom)
-    io.to(newRoom).emit('message', `${name} has joined!`)
-    UserController.addUser({name, newRoom, socketID})
+    socket.join(room)
+    socket.emit('roomID', room)
+    io.to(room).emit('event-message', `${name} has joined!`)
+    UserController.addUser({name, room, socketID})
   })
 
-  socket.on('join', ({name, roomID}) => {
-    console.log('JOIN\nNAME: ' + name + '\nRoom ID: ' + roomID)
+  socket.on('join', ({name, room}) => {
+    console.log('JOIN! NAME: ' + name + ' Room ID: ' + room)
     let socketID = socket.id
     //let user = UserController.joinRoom({name, socketID, roomID})
-    socket.join(roomID)
-    io.to(roomID).emit('message', `${name} has joined`)
-    UserController.addUser({name, roomID, socketID})
+    socket.join(room)
+    io.to(room).emit('message', `${name} has joined`)
+    UserController.addUser({name, room, socketID})
   })
 
   socket.on('disconnect', () => {

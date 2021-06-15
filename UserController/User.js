@@ -13,7 +13,7 @@ exports.addUser = ({name, room, socketID}) => {
     //     id = crypto({length: 5, type: 'distinguishable'})
     //     console.log(id)
     // }
-
+    console.log('ADD USER: ROOMID: ' + room)
     if (!users[socketID]) {
         users[socketID] = {
             username: name.trim().toLowerCase(),
