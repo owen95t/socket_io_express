@@ -36,35 +36,60 @@ io.on('connection', (socket) => {
       return
     }
     console.log(user)
-    io.to(user.room).emit('message', {user: user, message: msg})
-
-    //io.emit('message', msg)
+    socket.broadcast.to(user.room).emit('message', {user: user.username, message: msg})
+    // io.to(user.room).emit('message', {user: user.username, message: msg})
   })
 
   socket.on('create', name => {
     console.log('CREATE BY: ' + name)
+    //CREATE ROOM
     let room = UserController.createRoom()
     console.log('ROOMID: ' + room)
+    //GET SOCKET ID
     let socketID = socket.id
+    //SOCKET JOIN ROOM
     socket.join(room)
+    //EMIT ROOM ID TO FRONTEND
     socket.emit('roomID', room)
+    //SEND EVENT MESSAGE
     io.to(room).emit('event-message', `${name} has joined!`)
     UserController.addUser({name, room, socketID})
+    //GET ALL CLIENTS IN ROOM
+
+    let userList = []
+    let users = io.sockets.adapter.rooms.get(room).entries();
+    for (let user of users) {
+      userList.push(UserController.getUser(user[0]).username)
+    }
+    socket.emit('user-list', userList)
   })
 
   socket.on('join', ({name, room}) => {
     console.log('JOIN! NAME: ' + name + ' Room ID: ' + room)
     let socketID = socket.id
+    UserController.addUser({name, room, socketID})
     //let user = UserController.joinRoom({name, socketID, roomID})
     socket.join(room)
-    io.to(room).emit('message', `${name} has joined`)
-    UserController.addUser({name, room, socketID})
+    io.to(room).emit('event-message', `${name} has joined`)
+    //List all user by their socketid
+    //users is a set
+
+    let userList = []
+    let users = io.sockets.adapter.rooms.get(room).entries();
+    for (let user of users) {
+      userList.push(UserController.getUser(user[0]).username)
+    }
+    io.to(room).emit('user-list', userList)
   })
 
   socket.on('disconnect', () => {
-    console.log('a user disconnected')
-    const socketID = socket.id
-    UserController.removeUser(socketID)
+    let user = UserController.getUser(socket.id)
+    if (user) {
+      io.to(user.room).emit('event-message', `${user.username} has left`);
+    }
+    console.log(socket.id + ' disconnected')
+    UserController.removeUser(socket.id)
+
   })
 })
 

@@ -6,13 +6,6 @@ let users = {}
 //CURRENT: MODEL FOR ONE USER CAN ONLY BE IN ONE ROOM ONLY
 
 exports.addUser = ({name, room, socketID}) => {
-    //let id = crypto({length: 5, type: 'distinguishable'});
-    //console.log(id)
-
-    // while (users[id]) {
-    //     id = crypto({length: 5, type: 'distinguishable'})
-    //     console.log(id)
-    // }
     console.log('ADD USER: ROOMID: ' + room)
     if (!users[socketID]) {
         users[socketID] = {
@@ -41,9 +34,6 @@ exports.createRoom = () => {
 }
 
 
-exports.addToRoom = ({username, roomID}) => {
-
-}
 exports.removeUser = (socketID) => {
     if(users[socketID]){
         delete users.socketID
@@ -53,10 +43,3 @@ exports.removeUser = (socketID) => {
 exports.getUser = (socketID) => {
     return users[socketID]
 }
-
-
-// exports.addToRoom = ({username, roomID}) => {
-//     if(rooms[roomID]){
-//         rooms[roomID][1].push()
-//     }
-// }
