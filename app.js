@@ -29,15 +29,14 @@ io.on('connection', (socket) => {
   console.log('ID: ' + socket.id)
 
   socket.on('sendMessage', (msg) => {
-    console.log(msg)
+    //console.log(msg)
     let userID = socket.id
     const user = UserController.getUser(userID)
     if(!user){
       return
     }
-    console.log(user)
+    //console.log(user)
     socket.broadcast.to(user.room).emit('message', {user: user.username, message: msg})
-    // io.to(user.room).emit('message', {user: user.username, message: msg})
   })
 
   socket.on('create', name => {
@@ -70,7 +69,7 @@ io.on('connection', (socket) => {
     UserController.addUser({name, room, socketID})
     //let user = UserController.joinRoom({name, socketID, roomID})
     socket.join(room)
-    io.to(room).emit('event-message', `${name} has joined`)
+    io.to(room).emit('event-message', `${name} has joined!`)
     //List all user by their socketid
     //users is a set
 
