@@ -3,15 +3,15 @@
 To start the server
 ### `node app.js` or `nodemon` 
 
-##Endpoints (Express.js):
+## Endpoints (Express.js):
 
 `/`
 
 Returns 'HELLO!'
 
-##Socket.io
+## Socket.io
 
-###Events
+### Events
 
 `connection`
 - On Socket connect 
