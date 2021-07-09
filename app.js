@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 4000
 const server = require('http').createServer(app)
 const {Server} = require('socket.io')
 const io = new Server(server, {transports: ['websocket']})
+const helmet = require('helmet')
 
 const UserController = require('./UserController/User')
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }))
+app.use(helmet())
 app.set('json spaces', 2)
 
 //SETUP ROUTES

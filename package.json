@@ -88,6 +88,7 @@
     "has-flag": "^3.0.0",
     "has-symbols": "^1.0.2",
     "has-yarn": "^2.1.0",
+    "helmet": "^4.6.0",
     "http-cache-semantics": "^4.1.0",
     "http-errors": "^1.6.3",
     "iconv-lite": "^0.4.23",
@@ -228,7 +229,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC"
