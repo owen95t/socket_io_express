@@ -78,7 +78,6 @@
     "finalhandler": "^1.1.1",
     "forwarded": "^0.2.0",
     "fresh": "^0.5.2",
-    "fsevents": "^2.3.2",
     "function-bind": "^1.1.1",
     "get-intrinsic": "^1.1.1",
     "get-stream": "^4.1.0",
@@ -230,6 +229,9 @@
     "yargs": "^3.10.0"
   },
   "devDependencies": {},
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
