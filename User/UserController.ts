@@ -40,7 +40,7 @@ export const addUser = ({name, room, socketID}: User, map: UserMap): void => {
 export const createRoom = (): string => {
     const length = 6;
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {

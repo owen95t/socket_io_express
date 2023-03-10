@@ -9,6 +9,7 @@ import helmet from "helmet";
 
 import * as UserController from './User/UserController';
 import UserMap from "./User/UserMap";
+import {User} from "./User/UserInterface";
 
 //SETUP MIDDLEWARE
 index.use(express.json());
@@ -88,7 +89,7 @@ io.on('connection', (socket) => {
     let users = io.sockets.adapter.rooms.get(room).entries();
     for (let user of users) {
       // @ts-ignore
-      userList.push(UserController.getUser(user[0], userMap).username)
+      userList.push(UserController.getUser(user[0], userMap).name)
     }
     io.to(room).emit('user-list', userList)
   })
