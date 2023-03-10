@@ -12,7 +12,13 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node-dev app.ts"
+    "start": "ts-node-dev app.ts",
+    "postinstall": "tsc",
+    "watch-node": "nodemon dist/index.js",
+    "watch-ts": "tsc -w"
+  },
+  "engines": {
+    "node": "18.12.1"
   },
   "author": "",
   "license": "ISC",
