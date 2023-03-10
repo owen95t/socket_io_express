@@ -1,8 +1,8 @@
 import express from 'express';
-const app = express()
+const index = express()
 const PORT = process.env.PORT || 4000
 import * as server from 'http'
-const HTTPServer = server.createServer(app)
+const HTTPServer = server.createServer(index)
 import { Server } from "socket.io";
 const io = new Server(HTTPServer, {transports: ['websocket']})
 import helmet from "helmet";
@@ -11,15 +11,15 @@ import * as UserController from './User/UserController';
 import UserMap from "./User/UserMap";
 
 //SETUP MIDDLEWARE
-app.use(express.json());
-app.use(express.urlencoded({
+index.use(express.json());
+index.use(express.urlencoded({
   extended: true
 }))
-app.use(helmet())
-app.set('json spaces', 2)
+index.use(helmet())
+index.set('json spaces', 2)
 
 //SETUP ROUTES
-app.get('/', (req, res) => {
+index.get('/', (req, res) => {
   res.send('HELLO!')
 })
 

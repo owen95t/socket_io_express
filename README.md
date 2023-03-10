@@ -1,7 +1,7 @@
 # Welcome to Chat95 Backend
 
 To start the server
-### `node app.ts` or `nodemon` 
+### `node index.ts` or `nodemon` 
 
 ## Endpoints (Express.js):
 
