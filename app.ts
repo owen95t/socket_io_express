@@ -1,12 +1,14 @@
-const express = require('express');
+import express from 'express';
 const app = express()
 const PORT = process.env.PORT || 4000
-const server = require('http').createServer(app)
-const {Server} = require('socket.io')
-const io = new Server(server, {transports: ['websocket']})
-const helmet = require('helmet')
+import * as server from 'http'
+const HTTPServer = server.createServer(app)
+import { Server } from "socket.io";
+const io = new Server(HTTPServer, {transports: ['websocket']})
+import helmet from "helmet";
 
-const UserController = require('./UserController/User')
+import * as UserController from './User/UserController';
+import UserMap from "./User/UserMap";
 
 //SETUP MIDDLEWARE
 app.use(express.json());
@@ -21,6 +23,8 @@ app.get('/', (req, res) => {
   res.send('HELLO!')
 })
 
+const userMap = new UserMap();
+
 //SETUP SOCKET.IO
 io.on('connection', (socket) => {
   console.log('a user connected!')
@@ -33,12 +37,12 @@ io.on('connection', (socket) => {
   socket.on('sendMessage', (msg) => {
     //console.log(msg)
     let userID = socket.id
-    const user = UserController.getUser(userID)
+    const user = UserController.getUser(userID, userMap)
     if(!user){
       return
     }
     //console.log(user)
-    socket.broadcast.to(user.room).emit('message', {user: user.username, message: msg})
+    socket.broadcast.to(user.room).emit('message', {user: user.name, message: msg})
   })
 
   socket.on('create', name => {
@@ -54,13 +58,17 @@ io.on('connection', (socket) => {
     socket.emit('roomID', room)
     //SEND EVENT MESSAGE
     io.to(room).emit('event-message', `${name} has joined!`)
-    UserController.addUser({name, room, socketID})
+    UserController.addUser({name, room, socketID}, userMap)
     //GET ALL CLIENTS IN ROOM
 
     let userList = []
+    // @ts-ignore
     let users = io.sockets.adapter.rooms.get(room).entries();
-    for (let user of users) {
-      userList.push(UserController.getUser(user[0]).username)
+    if (users !== undefined && users.next()) {
+      for (let user of users) {
+        // @ts-ignore
+        userList.push(UserController.getUser(user[0], userMap).name);
+      }
     }
     socket.emit('user-list', userList)
   })
@@ -68,35 +76,38 @@ io.on('connection', (socket) => {
   socket.on('join', ({name, room}) => {
     console.log('JOIN! NAME: ' + name + ' Room ID: ' + room)
     let socketID = socket.id
-    UserController.addUser({name, room, socketID})
-    //let user = UserController.joinRoom({name, socketID, roomID})
+    UserController.addUser({name, room, socketID}, userMap)
+    //let user = User.joinRoom({name, socketID, roomID})
     socket.join(room)
     io.to(room).emit('event-message', `${name} has joined!`)
     //List all user by their socketid
     //users is a set
 
     let userList = []
+    // @ts-ignore
     let users = io.sockets.adapter.rooms.get(room).entries();
     for (let user of users) {
-      userList.push(UserController.getUser(user[0]).username)
+      // @ts-ignore
+      userList.push(UserController.getUser(user[0], userMap).username)
     }
     io.to(room).emit('user-list', userList)
   })
 
   socket.on('disconnect', () => {
-    let user = UserController.getUser(socket.id)
+    let user = UserController.getUser(socket.id, userMap)
     if (user) {
-      io.to(user.room).emit('event-message', `${user.username} has left`);
+      io.to(user.room).emit('event-message', `${user.name} has left`);
     }
     console.log(socket.id + ' disconnected')
-    UserController.removeUser(socket.id)
+    UserController.removeUser(socket.id, userMap)
 
   })
 })
 
 
+
 //LISTEN
-server.listen(PORT, () => {
+HTTPServer.listen(PORT, () => {
   console.log('ALIVE ON PORT 4000')
 })
 
