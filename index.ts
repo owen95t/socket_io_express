@@ -4,7 +4,6 @@ const PORT = process.env.PORT || 4000
 import * as server from 'http'
 const HTTPServer = server.createServer(index)
 import { Server } from "socket.io";
-const io = new Server(HTTPServer, {transports: ['websocket']})
 import helmet from "helmet";
 
 import * as UserController from './User/UserController';
@@ -26,6 +25,8 @@ index.get('/', (req, res) => {
 
 const userMap = new UserMap();
 
+const io = new Server(HTTPServer, {transports: ['websocket']})
+
 //SETUP SOCKET.IO
 io.on('connection', (socket) => {
   console.log('a user connected!')
@@ -39,7 +40,7 @@ io.on('connection', (socket) => {
     //console.log(msg)
     let userID = socket.id
     const user = UserController.getUser(userID, userMap)
-    if(!user){
+    if (!user) {
       return
     }
     //console.log(user)
@@ -63,12 +64,12 @@ io.on('connection', (socket) => {
     //GET ALL CLIENTS IN ROOM
 
     let userList = []
-    // @ts-ignore
-    let users = io.sockets.adapter.rooms.get(room).entries();
+    let users = io.sockets.adapter.rooms.get(room)?.entries();
     if (users !== undefined && users.next()) {
       for (let user of users) {
-        // @ts-ignore
-        userList.push(UserController.getUser(user[0], userMap).name);
+        if (UserController.getUser(user[0], userMap) !== undefined) {
+          userList.push(UserController.getUser(user[0], userMap)!.name);
+        }
       }
     }
     socket.emit('user-list', userList)
@@ -78,18 +79,18 @@ io.on('connection', (socket) => {
     console.log('JOIN! NAME: ' + name + ' Room ID: ' + room)
     let socketID = socket.id
     UserController.addUser({name, room, socketID}, userMap)
-    //let user = User.joinRoom({name, socketID, roomID})
+    // let user = User.joinRoom({name, socketID, roomID})
     socket.join(room)
     io.to(room).emit('event-message', `${name} has joined!`)
-    //List all user by their socketid
-    //users is a set
+    // List all user by their socketid
+    // users is a set
 
     let userList = []
-    // @ts-ignore
-    let users = io.sockets.adapter.rooms.get(room).entries();
-    for (let user of users) {
-      // @ts-ignore
-      userList.push(UserController.getUser(user[0], userMap).name)
+    let users = io.sockets.adapter.rooms.get(room)?.entries();
+    if (users !== undefined && users?.next()) {
+      for (let user of users) {
+        userList.push(UserController.getUser(user[0], userMap)!.name)
+      }
     }
     io.to(room).emit('user-list', userList)
   })

@@ -17,9 +17,6 @@
     "watch-node": "nodemon dist/index.js",
     "watch-ts": "tsc -w"
   },
-  "engines": {
-    "node": "18.12.1"
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
